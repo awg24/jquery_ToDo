@@ -2,14 +2,30 @@ $(document).on("ready", start);
 
 function start(e) {
 
+	var list = [];
+	var id = 0;
+
+	$.get("https://tiny-pizza-server.herokuapp.com/collections/awg",function(data){
+		console.log(data);
+		data.reverse();
+		if(data.length !== 0){
+			for(var i = 0; i < data.length;i++){
+				list.push(data[i]);
+				addTodo(list);
+				id = data.length;
+			}
+			
+		} else {
+			id = 0;
+		}
+	},"json");
+
 	var $inputBox = $("#todo-input");	
 	var $todoButton = $("#add-todo-button");
 	var $todoForm = $("#todo-form");
 	var $list = $("#list");
-	var list = [];
 	var parsedList = [];
 	var idArray = [];
-	var id = 0;
 	var toDoObject = {};
 
 	$todoForm.on("submit", makeToDoObject);
@@ -24,6 +40,7 @@ function start(e) {
 		toDoObject.completed = false;
 		toDoObject.deleted = false;
 		list.push(toDoObject);
+		$.post("https://tiny-pizza-server.herokuapp.com/collections/awg",toDoObject,"json");
 		toDoObject = {};
 		addTodo(list);
 	}
