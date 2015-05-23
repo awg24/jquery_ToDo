@@ -1,0 +1,24 @@
+{
+  "name": "allen",
+  "version": "0.0.0",
+  "authors": [
+    "allen wes <allen.wes.g@gmail.com>"
+  ],
+  "description": "to-do list",
+  "main": "index.html",
+  "keywords": [
+    "todo",
+    "jquery"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4"
+  }
+}
