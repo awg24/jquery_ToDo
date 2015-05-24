@@ -3,10 +3,10 @@ $(document).on("ready", start);
 function start(e) {
 
 	var list = [];
+	var flag = true;
 	var id = 0;
 
 	$.get("https://tiny-pizza-server.herokuapp.com/collections/awg",function(data){
-		console.log(data);
 		data.reverse();
 		if(data.length !== 0){
 			for(var i = 0; i < data.length;i++){
@@ -14,7 +14,7 @@ function start(e) {
 				addTodo(list);
 				id = data.length;
 			}
-			
+				
 		} else {
 			id = 0;
 		}
@@ -39,17 +39,16 @@ function start(e) {
 		$inputBox.val("");
 		toDoObject.completed = false;
 		toDoObject.deleted = false;
-		list.push(toDoObject);
 		$.post("https://tiny-pizza-server.herokuapp.com/collections/awg",toDoObject,"json");
+		list.push(toDoObject);
 		toDoObject = {};
 		addTodo(list);
 	}
 	
 	function addTodo(theList) {
-		console.log(list);
 		for(var i = 0; i < theList.length;i++){
 			if(theList[i]["deleted"] !== true){
-				if(theList[i]["completed"] === true){
+				if(theList[i]["completed"] === true || theList[i]["completed"] === "true"){
 					parsedList.push("<del>"+theList[i]["toDo"]+"</del>");
 					idArray.push(theList[i]["id"]);
 				} else {
@@ -78,6 +77,19 @@ function start(e) {
 		var $unorderedList = $(event.target);
 		$unorderedList.css("text-decoration","line-through");
 		list[event.target.id]["completed"] = true;
+		var updatedList = [];
+
+		$.get("https://tiny-pizza-server.herokuapp.com/collections/awg",function(data){
+			data.reverse();
+				for(var i = 0; i < data.length;i++){
+					updatedList.push(data[i]);
+				}
+			$.ajax({url:"https://tiny-pizza-server.herokuapp.com/collections/awg/"+updatedList[event.target.id]["_id"], 
+			type: "PUT", 
+			data: {completed: true}
+			});	
+		},"json");
+		
 		$inputBox.focus();
 	}
 	
