@@ -11,9 +11,10 @@ function start(e) {
 		if(data.length !== 0){
 			for(var i = 0; i < data.length;i++){
 				list.push(data[i]);
+				list[i]["id"] = i;
 				addTodo(list);
-				id = data.length;
 			}
+			id = data.length;
 				
 		} else {
 			id = 0;
@@ -24,12 +25,16 @@ function start(e) {
 	var $todoButton = $("#add-todo-button");
 	var $todoForm = $("#todo-form");
 	var $list = $("#list");
+	var $deleteCompleted = $("#delete-completed");
+	var $deleteAll = $("#delete-all");
 	var parsedList = [];
 	var idArray = [];
 	var toDoObject = {};
 
 	$todoForm.on("submit", makeToDoObject);
 	$list.on("click", addStrike);
+	$deleteCompleted.on("click", deleteRecords);
+	$deleteAll.on("click", deleteAll);
 
 	function makeToDoObject(event){
 		event.preventDefault();
@@ -76,14 +81,18 @@ function start(e) {
 	function addStrike(event){
 		var $unorderedList = $(event.target);
 		$unorderedList.css("text-decoration","line-through");
+		console.log("target ID is: "+event.target.id);
+		console.log("list is: "+list);
 		list[event.target.id]["completed"] = true;
 		var updatedList = [];
 
 		$.get("https://tiny-pizza-server.herokuapp.com/collections/awg",function(data){
 			data.reverse();
-				for(var i = 0; i < data.length;i++){
-					updatedList.push(data[i]);
-				}
+
+			for(var i = 0; i < data.length;i++){
+				updatedList.push(data[i]);
+			}
+
 			$.ajax({url:"https://tiny-pizza-server.herokuapp.com/collections/awg/"+updatedList[event.target.id]["_id"], 
 			type: "PUT", 
 			data: {completed: true}
@@ -91,6 +100,46 @@ function start(e) {
 		},"json");
 		
 		$inputBox.focus();
+	}
+
+	function deleteRecords(event){
+		var deleteList = [];
+		$.get("https://tiny-pizza-server.herokuapp.com/collections/awg",function(data){
+			data.reverse();
+			console.log(data);
+			for(var i = 0; i < data.length;i++){
+				//deleteList.push(data[i]);
+				//console.log("Items to be deleted: "+deleteList);
+				if(data[i]["completed"] === "true"){
+					$.ajax({url:"https://tiny-pizza-server.herokuapp.com/collections/awg/"+data[i]["_id"], 
+							type: "DELETE", 
+							success: function(result) {
+								for(var j = 0; j < deleteList.length; j++){
+									list[j]["id"] = j;
+								}
+								location.reload();
+			    			}
+							});	
+				}
+
+			}
+		},"json");
+	}
+
+	function deleteAll(){
+		var deleteList = [];
+		$.get("https://tiny-pizza-server.herokuapp.com/collections/awg",function(data){
+			data.reverse();
+			for(var i = 0; i < data.length;i++){
+				deleteList.push(data[i]);
+					$.ajax({url:"https://tiny-pizza-server.herokuapp.com/collections/awg/"+deleteList[i]["_id"], 
+					type: "DELETE", 
+					success: function(result) {
+	     				location.reload();
+	    			}
+					});	
+			}	
+		},"json");
 	}
 	
 }
