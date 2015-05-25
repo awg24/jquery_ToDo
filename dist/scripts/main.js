@@ -102,26 +102,36 @@ function start(e) {
 		$inputBox.focus();
 	}
 
-	function deleteRecords(event){
+	function deleteRecords(){
 		var deleteList = [];
+		var markedForDeletion = 0;
 		$.get("https://tiny-pizza-server.herokuapp.com/collections/awg",function(data){
 			data.reverse();
-			console.log(data);
+			for(var k = 0; k < data.length; k++){
+				if(data[k]["completed"] === "true"){
+					markedForDeletion++;
+				}
+			}
 			for(var i = 0; i < data.length;i++){
-				//deleteList.push(data[i]);
-				//console.log("Items to be deleted: "+deleteList);
-				if(data[i]["completed"] === "true"){
-					$.ajax({url:"https://tiny-pizza-server.herokuapp.com/collections/awg/"+data[i]["_id"], 
+				if(data.length !== data.length - markedForDeletion){
+					if(data.length - markedForDeletion === 0){
+						deleteAll();
+					}
+					deleteList.push(data[i]);
+					if(deleteList[i]["completed"] === "true"){
+						$.ajax({url:"https://tiny-pizza-server.herokuapp.com/collections/awg/"+deleteList[i]["_id"], 
 							type: "DELETE", 
 							success: function(result) {
 								for(var j = 0; j < deleteList.length; j++){
 									list[j]["id"] = j;
 								}
-								location.reload();
+			     				deleteRecords();
 			    			}
 							});	
+						} 
+				} else {
+					location.reload();
 				}
-
 			}
 		},"json");
 	}
@@ -130,14 +140,18 @@ function start(e) {
 		var deleteList = [];
 		$.get("https://tiny-pizza-server.herokuapp.com/collections/awg",function(data){
 			data.reverse();
-			for(var i = 0; i < data.length;i++){
-				deleteList.push(data[i]);
-					$.ajax({url:"https://tiny-pizza-server.herokuapp.com/collections/awg/"+deleteList[i]["_id"], 
-					type: "DELETE", 
-					success: function(result) {
-	     				location.reload();
-	    			}
-					});	
+			if(data.length !== 0){
+				for(var i = 0; i < data.length;i++){
+					deleteList.push(data[i]);
+						$.ajax({url:"https://tiny-pizza-server.herokuapp.com/collections/awg/"+deleteList[i]["_id"], 
+						type: "DELETE", 
+						success: function(result) {
+		     				deleteAll();
+		    			}
+						});	
+				}
+			} else {
+				location.reload();
 			}	
 		},"json");
 	}
