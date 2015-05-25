@@ -51,7 +51,7 @@ function start(e) {
 	
 	function addTodo(theList) {
 		for(var i = 0; i < theList.length;i++){
-			if(theList[i]["deleted"] !== true){
+			if(theList[i]["deleted"] !== true || theList[i]["deleted"] !== "true"){
 				if(theList[i]["completed"] === true || theList[i]["completed"] === "true"){
 					parsedList.push("<del>"+theList[i]["toDo"]+"</del>");
 					idArray.push(theList[i]["id"]);
