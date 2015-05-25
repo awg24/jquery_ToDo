@@ -92,7 +92,7 @@ function start(e) {
 
 			$.ajax({url:"https://tiny-pizza-server.herokuapp.com/collections/awg/"+updatedList[event.target.id]["_id"], 
 			type: "PUT", 
-			data: {completed: true}
+			data: {completed: true, deleted: true}
 			});	
 		},"json");
 		
@@ -105,7 +105,7 @@ function start(e) {
 		$.get("https://tiny-pizza-server.herokuapp.com/collections/awg",function(data){
 			data.reverse();
 			for(var k = 0; k < data.length; k++){
-				if(data[k]["completed"] === "true"){
+				if(data[k]["deleted"] === "true"){
 					markedForDeletion++;
 				}
 			}
@@ -115,7 +115,7 @@ function start(e) {
 						deleteAll();
 					}
 					deleteList.push(data[i]);
-					if(deleteList[i]["completed"] === "true"){
+					if(deleteList[i]["deleted"] === "true"){
 						$.ajax({url:"https://tiny-pizza-server.herokuapp.com/collections/awg/"+deleteList[i]["_id"], 
 							type: "DELETE", 
 							success: function(result) {
