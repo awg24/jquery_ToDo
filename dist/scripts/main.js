@@ -3,7 +3,6 @@ $(document).on("ready", start);
 function start(e) {
 
 	var list = [];
-	var flag = true;
 	var id = 0;
 
 	$.get("https://tiny-pizza-server.herokuapp.com/collections/awg",function(data){
@@ -81,8 +80,6 @@ function start(e) {
 	function addStrike(event){
 		var $unorderedList = $(event.target);
 		$unorderedList.css("text-decoration","line-through");
-		console.log("target ID is: "+event.target.id);
-		console.log("list is: "+list);
 		list[event.target.id]["completed"] = true;
 		var updatedList = [];
 
