@@ -92,7 +92,7 @@ function start(e) {
 
 			$.ajax({url:"https://tiny-pizza-server.herokuapp.com/collections/awg/"+updatedList[event.target.id]["_id"], 
 			type: "PUT", 
-			data: {completed: true, deleted: true}
+			data: {completed: true, deleted: true, id: event.target.id}
 			});	
 		},"json");
 		
